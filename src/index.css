@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+/*
+  Design tokens. Layout and typography live in the JSX as Tailwind utilities;
+  this file only holds the theme and the few global behaviours utilities cannot express.
+*/
+@theme {
+  /* Site breakpoints: phone < 601px, tablet 601-900px, desktop >= 901px, wide >= 1600px.
+     md (761px) is only where the header switches from the menu button to inline links. */
+  --breakpoint-*: initial;
+  --breakpoint-sm: 601px;
+  --breakpoint-md: 761px;
+  --breakpoint-lg: 901px;
+  --breakpoint-xl: 1600px;
+
+  --color-cream: #eee5d3;
+  --color-accent: #932f36;
+  --color-ink: #242321;
+  --color-line: #24232130;
+  --color-muted: #625b50;
+  --color-muted-soft: #71685e;
+  --color-panel: #e9e3d9;
+  --color-work: #faf7f0;
+  --color-story: #dcd8d0;
+  --color-about: #252523;
+  --color-about-text: #f5f0e6;
+  --color-about-muted: #c5c0b6;
+  --color-about-accent: #ceada0;
+  --color-contact: #e2d3be;
+  --color-phone: #faf8f3;
+  --color-screen: #e5d8bc;
+  --color-dot: #b6aea3;
+
+  --font-serif: "Bodoni Moda", Georgia, "Times New Roman", serif;
+  --font-sans: Arial, Helvetica, sans-serif;
+
+  /* Body and supporting text share one size. */
+  --text-body: 14px;
+
+  /* Viewport height below the sticky header: the height of one snap screen. */
+  --spacing-fold: calc(100svh - var(--header-height));
+
+  --animate-menu-in: menu-in 0.22s ease-out;
+  @keyframes menu-in {
+    from { opacity: 0; translate: 0 -8px; }
+    to { opacity: 1; translate: 0 0; }
+  }
+}
+
+@layer base {
+  :root {
+    --header-height: 76px;
+    font-family: var(--font-sans);
+    color: var(--color-ink);
+    background: var(--color-cream);
+    font-synthesis: none;
+    -webkit-font-smoothing: antialiased;
+  }
+  @media (width < 601px) {
+    :root { --header-height: 68px; }
+  }
+
+  /* Scroll snapping: each screen fills the viewport below the header; oversized
+     sections scroll freely and snap to whichever edge you arrive from.
+     Off on phones and for people who prefer reduced motion.
+     The header offset is applied as scroll-margin-top on each snap stop (see ui.tsx)
+     rather than scroll-padding-top here: Firefox sizes the free-scroll range of an
+     oversized section with the padding subtracted, which lets it rest one header
+     height past the section's bottom edge. scroll-margin is exact in every engine. */
+  html {
+    scroll-behavior: smooth;
+    scroll-snap-type: y mandatory;
+  }
+  @media (width < 601px) {
+    html { scroll-snap-type: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; scroll-snap-type: none; }
+  }
+
+  em { font-family: var(--font-serif); font-weight: 400; }
+  button { cursor: pointer; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 5px; }
+  ::selection { background: var(--color-accent); color: var(--color-cream); }
+}
+
+@layer components {
+  /* Toggled by the IntersectionObserver in App.tsx as text scrolls into view. */
+  .scroll-fade-text { opacity: 0; transition: opacity 0.8s ease-out; }
+  .scroll-fade-text.text-in-view, .scroll-fade-text:focus-within { opacity: 1; }
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-fade-text { opacity: 1; transition: none; }
+  }
+}
